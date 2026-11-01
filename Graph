@@ -1,0 +1,153 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX 10
+
+struct Node
+{
+    int dest, cost;
+    struct Node *next;
+};
+
+struct Node *adj[MAX];
+char cities[MAX][50];
+int visited[MAX], n;
+
+// Add flight
+void addEdge(int src, int dest, int cost)
+{
+    struct Node *newNode;
+
+    newNode = malloc(sizeof(struct Node));
+    newNode->dest = dest;
+    newNode->cost = cost;
+    newNode->next = adj[src];
+    adj[src] = newNode;
+
+    newNode = malloc(sizeof(struct Node));
+    newNode->dest = src;
+    newNode->cost = cost;
+    newNode->next = adj[dest];
+    adj[dest] = newNode;
+}
+
+// Display graph
+void display()
+{
+    int i;
+    struct Node *temp;
+
+    printf("\nFlight Graph:\n");
+
+    for (i = 0; i < n; i++)
+    {
+        printf("%s -> ", cities[i]);
+
+        temp = adj[i];
+
+        while (temp != NULL)
+        {
+            printf("%s(%d) -> ",
+                   cities[temp->dest], temp->cost);
+
+            temp = temp->next;
+        }
+
+        printf("NULL\n");
+    }
+}
+
+// DFS traversal
+void DFS(int city)
+{
+    struct Node *temp;
+
+    visited[city] = 1;
+    temp = adj[city];
+
+    while (temp != NULL)
+    {
+        if (visited[temp->dest] == 0)
+            DFS(temp->dest);
+
+        temp = temp->next;
+    }
+}
+
+// Check connectivity
+void checkConnectivity()
+{
+    int i;
+
+    for (i = 0; i < n; i++)
+        visited[i] = 0;
+
+    DFS(0);
+
+    for (i = 0; i < n; i++)
+    {
+        if (visited[i] == 0)
+        {
+            printf("\nGraph is not connected.");
+            return;
+        }
+    }
+
+    printf("\nGraph is connected.");
+}
+
+int main()
+{
+    int i, m, src, dest, cost;
+    char source[50], destination[50];
+
+    printf("Enter number of cities: ");
+    scanf("%d", &n);
+
+    if (n < 1 || n > MAX)
+        return 0;
+
+    for (i = 0; i < n; i++)
+        adj[i] = NULL;
+
+    printf("Enter city names:\n");
+
+    for (i = 0; i < n; i++)
+        scanf("%49s", cities[i]);
+
+    printf("Enter number of flights: ");
+    scanf("%d", &m);
+
+    for (i = 0; i < m; i++)
+    {
+        printf("Enter source, destination and cost: ");
+        scanf("%49s %49s %d", source, destination, &cost);
+
+        for (src = 0; src < n; src++)
+        {
+            if (strcmp(cities[src], source) == 0)
+                break;
+        }
+
+        for (dest = 0; dest < n; dest++)
+        {
+            if (strcmp(cities[dest], destination) == 0)
+                break;
+        }
+
+        if (src == n || dest == n || src == dest || cost < 0)
+        {
+            printf("Invalid input. Try again.\n");
+            i--;
+            continue;
+        }
+
+        addEdge(src, dest, cost);
+    }
+
+    display();
+    checkConnectivity();
+
+    return 0;
+}
