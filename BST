@@ -1,0 +1,165 @@
+#include <stdio.h>
+#include <stdlib.h>
+struct Node
+{
+    int data;
+    struct Node *left;
+    struct Node *right;
+};
+struct Node* createNode(int value)
+{
+    struct Node *newNode;
+    newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = value;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+struct Node* insert(struct Node *root, int value)
+{
+    if (root == NULL)
+        return createNode(value);
+    if (value < root->data)
+        root->left = insert(root->left, value);
+    else if (value > root->data)
+        root->right = insert(root->right, value);
+    return root;
+}
+
+int longestPath(struct Node *root)
+{
+    int left, right;
+    if (root == NULL)
+        return 0;
+
+    left = longestPath(root->left);
+    right = longestPath(root->right);
+
+    if (left > right)
+        return left + 1;
+    else
+        return right + 1;
+}
+int findMin(struct Node *root)
+{
+    if (root == NULL)
+        return -1;
+
+    while (root->left != NULL)
+        root = root->left;
+
+    return root->data;
+}
+void mirror(struct Node *root)
+{
+    struct Node *temp;
+    if (root == NULL)
+        return;
+    temp = root->left;
+    root->left = root->right;
+    root->right = temp;
+
+    mirror(root->left);
+    mirror(root->right);
+}
+int search(struct Node *root, int value)
+{
+    if (root == NULL)
+        return 0;
+
+    if (root->data == value)
+        return 1;
+
+    if (value < root->data)
+        return search(root->left, value);
+    else
+        return search(root->right, value);
+}
+void inorder(struct Node *root)
+{
+    if (root != NULL)
+    {
+        inorder(root->left);
+        printf("%d ", root->data);
+        inorder(root->right);
+    }
+}
+int main()
+{
+    struct Node *root = NULL;
+    int n, value, choice;
+    printf("Enter number of nodes: ");
+    scanf("%d", &n);
+    printf("Enter values: ");
+
+   for (int i = 0; i < n; i++)
+    {
+        scanf("%d", &value);
+        root = insert(root, value);
+    }
+    printf("\nBST created successfully.\n");
+    do
+    {
+        printf("\n----- BST MENU -----\n");
+        printf("1. Insert a new node\n");
+        printf("2. Find longest path\n");
+        printf("3. Find minimum value\n");
+        printf("4. Swap left and right pointers\n");
+        printf("5. Search a value\n");
+        printf("6. Display inorder\n");
+        printf("7. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice)
+        {
+            case 1:
+                printf("Enter value: ");
+                scanf("%d", &value);
+                root = insert(root, value);
+                printf("Node inserted successfully.\n");
+                break;
+
+            case 2:
+                printf("Number of nodes in longest path = %d\n",
+                       longestPath(root));
+                break;
+
+            case 3:
+                printf("Minimum value = %d\n",
+                       findMin(root));
+                break;
+
+            case 4:
+                mirror(root);
+               printf("Left and right pointers swapped.\n");
+                break;
+
+            case 5:
+                printf("Enter value to search: ");
+                scanf("%d", &value);
+                if (search(root, value))
+                    printf("Value found.\n");
+                else
+                    printf("Value not found.\n");
+
+                break;
+
+            case 6:
+                printf("Inorder traversal: ");
+                inorder(root);
+                printf("\n");
+                break;
+
+            case 7:
+                printf("Exiting program...\n");
+                break;
+
+            default:
+                printf("Invalid choice.\n");
+        }
+
+    } while (choice != 7);
+
+    return 0;
+}
