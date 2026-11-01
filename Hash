@@ -1,0 +1,136 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+int a[10]={-1,-1,-1,-1,-1,-1,-1,-1,-1,-1};
+
+void linear();
+void quadratic();
+void doublehashing();
+void display();
+
+int main()
+{
+    int ch;
+
+    while(1)
+    {
+        printf("\n1. Linear Probing");
+        printf("\n2. Quadratic Probing");
+        printf("\n3. Double Hashing");
+        printf("\n4. Exit");
+
+        printf("\nEnter your choice: ");
+        scanf("%d",&ch);
+
+        switch(ch)
+        {
+            case 1:
+                linear();
+                break;
+
+            case 2:
+                quadratic();
+                break;
+
+            case 3:
+                doublehashing();
+                break;
+
+            case 4:
+                exit(0);
+
+            default:
+                printf("\nInvalid choice");
+        }
+    }
+
+    return 0;
+}
+
+void display()
+{
+    int i;
+
+    printf("\nHash Table:\n");
+
+    for(i=0;i<10;i++)
+    {
+        printf("\nIndex %d = %d",i,a[i]);
+    }
+}
+
+void linear()
+{
+    int key,index,i;
+
+    printf("\nEnter number: ");
+    scanf("%d",&key);
+
+    index=key%10;
+
+    for(i=0;i<10;i++)
+    {
+        if(a[index]==-1)
+            break;
+
+        index=(index+1)%10;
+    }
+
+    if(i==10)
+        printf("\nHash Table Full");
+    else
+        a[index]=key;
+
+    display();
+}
+
+void quadratic()
+{
+    int key,index,i;
+
+    printf("\nEnter number: ");
+    scanf("%d",&key);
+
+    index=key%10;
+
+    for(i=0;i<10;i++)
+    {
+        index=(index+i*i)%10;
+
+        if(a[index]==-1)
+            break;
+    }
+
+    if(i==10)
+        printf("\nHash Table Full");
+    else
+        a[index]=key;
+
+    display();
+}
+
+void doublehashing()
+{
+    int key,index,i,h1,h2;
+
+    printf("\nEnter number: ");
+    scanf("%d",&key);
+
+    h1=key%10;
+    h2=7-(key%7);
+
+    for(i=0;i<10;i++)
+    {
+        index=(h1+i*h2)%10;
+
+        if(a[index]==-1)
+            break;
+    }
+
+    if(i==10)
+        printf("\nHash Table Full");
+    else
+        a[index]=key;
+
+    display();
+}
